@@ -1,0 +1,72 @@
+{{define "home"}}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Belajar</title>
+    </head>
+    <body>
+        <button><a href="/create">Create</a></button>
+        <br/>
+        <table border="1">
+            <tr>
+                <th>Id</th>
+                <th>Nama</th>
+                <th>Phone</th>
+                <th colspan="2">Action</th>
+            </tr>
+            {{range $index, $elem := .}}
+            <tr>
+                <td>{{$elem.Id}}</td>
+                 <td>{{$elem.Nama}}</td> 
+                 <td>{{$elem.Phone}}</td>
+                <td><button name="edit"><a href="/edit?id={{ $elem.Id }}">Edit</a></button></td>
+                <td><button name="hapus"><a href="/delete?id={{ $elem.Id }}">Delete</a></button></td>
+            </tr>
+            {{end}}
+        </table>
+    </body>
+</html>
+{{end}}
+
+{{define "edit"}}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit</title>
+    </head>
+    <body>
+        <h1>Edit Contact</h1>
+        <form method="post" action="/edit?id={{.Id}}">
+            <label>Nama:</label>
+            <input type="text" name="nama" value="{{.Nama}}">
+            <br><br/>
+            <label>Phone:</label>
+            <input type="text" name="phone" value="{{.Phone}}">
+            <br><br/>
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>
+{{end}}
+
+{{define "create"}}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Create contact</title>
+    </head>
+    <body>
+        <h1>Create New Account</h1>
+        <form action="/create" method="POST">
+            <label>Nama:</label>
+            <input type="text" name="nama" placeholder="username....">
+            <br>
+            <br/>
+            <label>Phone:</label>
+            <input type="text" name="phone" placeholder="phone.....">
+            <br><br/>
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>
+{{end}}
