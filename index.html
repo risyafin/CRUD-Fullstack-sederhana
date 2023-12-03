@@ -70,3 +70,37 @@
     </body>
 </html>
 {{end}}
+
+{{define "persegi"}}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Rumus Persegi</title>
+    </head>
+    <body>
+        <h1>Create New Account</h1>
+        <form action="/luasPersegi" method="POST">
+            <label>Masukkan Sisi:</label>
+            <input type="text" name="sisi">
+            <br>
+            <br/>
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>
+{{end}}
+
+{{define "jawaban"}}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Jawaban</title>
+    </head>
+    <body>
+        <h1>Jawaban luas Persegi</h1>
+            <label>Jawaban:</label>
+            <input type="text" name="total" value="{{.total}}">
+            <br><br/>
+    </body>
+</html>
+{{end}}

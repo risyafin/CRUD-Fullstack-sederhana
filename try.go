@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func connect() (*sql.DB, error) {
-	db, err := sql.Open("mysql", "root:18543@tcp(127.0.0.1:3306)/db_contact")
+	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/db_contact")
 	if err != nil {
 		return nil, err
 	}
@@ -21,6 +22,10 @@ type contact struct {
 	Id    string
 	Nama  string
 	Phone string
+}
+
+type Rumus struct {
+	Total float32
 }
 
 func routerIndexGet(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +43,7 @@ func routerIndexGet(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		defer rows.Close()
-		
+
 		var contacts []contact
 		for rows.Next() {
 			var each = contact{}
@@ -66,6 +71,7 @@ func routerIndexGet(w http.ResponseWriter, r *http.Request) {
 
 	http.Error(w, "method not found", http.StatusBadRequest)
 }
+
 func routerCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		var tmpl = template.Must(template.New("create").ParseFiles("index.html"))
@@ -164,6 +170,49 @@ func routerEdit(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Bad Request", http.StatusBadRequest)
 }
 func main() {
+	http.HandleFunc("/luasPersegi", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			var tmpl = template.Must(template.New("persegi").ParseFiles("index.html"))
+			err := tmpl.Execute(w, nil)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+		if r.Method == "POST" {
+			var sisi = r.FormValue("sisi")
+			bilangan, err := strconv.Atoi(sisi)
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Println("ini ", bilangan)
+			total := bilangan * bilangan
+			strconv.Itoa(total)
+			r.FormValue("total")
+			var data = map[string]interface{}{
+				"total": total,
+			}
+			var tmpl = template.Must(template.New("jawaban").ParseFiles("index.html"))
+			err = tmpl.Execute(w, data)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+
+		}
+		http.Redirect(w, r, "/jawaban", http.StatusMovedPermanently)
+
+	})
+	http.HandleFunc("/jawaban", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			var tmpl = template.Must(template.New("jawaban").ParseFiles("index.html"))
+
+			err := tmpl.Execute(w, nil)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+	})
 	http.HandleFunc("/home", routerIndexGet)
 	http.HandleFunc("/", routerIndexGet)
 	http.HandleFunc("/delete", routeDelete)
