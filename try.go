@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -115,11 +114,6 @@ func routeDelete(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// var tmpl = template.Must(template.New("home").ParseFiles("index.html"))
-		// err = tmpl.Execute(w, id)
-		// if err != nil {
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// }
 		http.Redirect(w, r, "/", http.StatusMovedPermanently)
 		return
 	}
@@ -134,7 +128,6 @@ func routerEdit(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		//db.Close()
 		var contact = contact{}
 		err = db.
 			QueryRow("select * from tb_contact where id = ?", id).
@@ -170,49 +163,6 @@ func routerEdit(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Bad Request", http.StatusBadRequest)
 }
 func main() {
-	http.HandleFunc("/luasPersegi", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "GET" {
-			var tmpl = template.Must(template.New("persegi").ParseFiles("index.html"))
-			err := tmpl.Execute(w, nil)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-			return
-		}
-		if r.Method == "POST" {
-			var sisi = r.FormValue("sisi")
-			bilangan, err := strconv.Atoi(sisi)
-			if err != nil {
-				fmt.Println(err)
-			}
-			fmt.Println("ini ", bilangan)
-			total := bilangan * bilangan
-			strconv.Itoa(total)
-			r.FormValue("total")
-			var data = map[string]interface{}{
-				"total": total,
-			}
-			var tmpl = template.Must(template.New("jawaban").ParseFiles("index.html"))
-			err = tmpl.Execute(w, data)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-
-		}
-		http.Redirect(w, r, "/jawaban", http.StatusMovedPermanently)
-
-	})
-	http.HandleFunc("/jawaban", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "GET" {
-			var tmpl = template.Must(template.New("jawaban").ParseFiles("index.html"))
-
-			err := tmpl.Execute(w, nil)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-			return
-		}
-	})
 	http.HandleFunc("/home", routerIndexGet)
 	http.HandleFunc("/", routerIndexGet)
 	http.HandleFunc("/delete", routeDelete)
